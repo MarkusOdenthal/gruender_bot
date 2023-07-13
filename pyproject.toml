@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "streamlit_youtube_chatbot"
+version = "0.1.0"
+description = ""
+authors = ["Markus Odenthal"]
+readme = "README.md"
+packages = [{include = "streamlit_youtube_chatbot"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+qdrant-client = "^1.3.1"
+openai = "^0.27.8"
+tiktoken = "^0.4.0"
+streamlit = "^1.23.1"
+langchain = "^0.0.230"
+youtube-transcript-api = "^0.6.1"
+pytube = "^15.0.0"
+
+[tool.poetry.group.lint.dependencies]
+isort = "^5.12.0"
+black = {version = "^23.1a1", allow-prereleases = true}
+flake8 = "^6.0.0"
+
+[tool.isort]
+profile = "black"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
