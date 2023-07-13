@@ -26,9 +26,9 @@ if "prompts" not in st.session_state:
     st.session_state.token_count += get_encoding_length(system_prompt)
 
 if prompt := st.chat_input():
-    if st.session_state["OPENAI_API_KEY"] == "":
-        st.info("Please add your OpenAI API key to continue.")
-        st.stop()
+    # if st.session_state["OPENAI_API_KEY"] == "":
+    #     st.info("Please add your OpenAI API key to continue.")
+    #     st.stop()
 
     if "messages" not in st.session_state:
         st.session_state["messages"] = [ChatMessage(role="user", content=prompt)]
@@ -40,11 +40,11 @@ if prompt := st.chat_input():
     with st.chat_message("assistant"):
         stream_handler = StreamHandler(st.empty())
         llm = ChatOpenAI(
-            openai_api_key=st.session_state["OPENAI_API_KEY"],
+            openai_api_key=st.secrets["OPENAI_API_KEY"],
             streaming=True,
             callbacks=[stream_handler],
         )
-        query_message = query_message_prompt(prompt, st.session_state["OPENAI_API_KEY"])
+        query_message = query_message_prompt(prompt, st.secrets["OPENAI_API_KEY"])
         st.session_state.token_count += get_encoding_length(query_message)
         st.session_state.prompts.append(ChatMessage(role="user", content=query_message))
         while st.session_state.token_count >= 4000:
