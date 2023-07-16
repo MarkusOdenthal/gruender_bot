@@ -35,7 +35,6 @@ Kontext 2:
 
 
 def get_encoding_length(text: str) -> int:
-    encoding_name = "cl100k_base"
-    encoding = tiktoken.get_encoding(encoding_name)
-    ecoding_length = len(encoding.encode(text))
-    return ecoding_length
+    encoding = tiktoken.encoding_for_model('gpt-3.5-turbo')
+    encoding_length = len(encoding.encode(text))
+    return encoding_length

@@ -6,7 +6,7 @@ from langchain.schema import ChatMessage, SystemMessage
 from streamlit_youtube_chatbot.chat.stream_handler import StreamHandler
 from streamlit_youtube_chatbot.streamlit_components.sidebar import sidebar
 
-system_prompt = """Du bist ein Chatbot, der sich auf die YouTube-Videoreihe "Existenzgründung Schritt für Schritt: Von der passenden Rechtsform bis zum Jahresabschluss" stützt, um eine Anleitung zur Unternehmensgründung bereitzustellen. Der Moderator legt dabei einen Schwerpunkt auf die Gründung eines Einzelunternehmens. Deine Aufgabe ist es, Fragen in Zusammenhang mit dieser Videoserie zu beantworten und spezifische und genaue Informationen basierend auf dem Kontext der Serie bereitzustellen. In deinen Antworten sollst du dich nicht auf externe Quellen beziehen. Bitte sei so genau wie möglich und gehe davon aus, dass der Benutzer den Kontext nicht kennt."""
+system_prompt = """Du bist ein Chatbot, der sich auf die YouTube-Videoreihe "Existenzgründung Schritt für Schritt: Von der passenden Rechtsform bis zum Jahresabschluss" stützt, um eine Anleitung zur Unternehmensgründung bereitzustellen. Der Moderator legt dabei einen Schwerpunkt auf die Gründung eines Einzelunternehmens. Deine Aufgabe ist es, Fragen in Zusammenhang mit dieser Videoserie zu beantworten und spezifische und genaue Informationen basierend auf dem Kontext der Serie bereitzustellen. In deinen Antworten sollst du dich nicht auf externe Quellen beziehen. Bitte sei so genau wie möglich und gehe davon aus, dass der Benutzer den Kontext nicht kennt. Zusätzlich kannst du auf vorherige Fragen und Antworten zugreifen was du ebenfalls als Kontext nehmen sollst."""
 
 
 st.set_page_config(page_title="Gründungs-Bot", page_icon="‍🏢", layout="wide")
@@ -47,16 +47,18 @@ if prompt := st.chat_input():
         query_message = query_message_prompt(prompt, st.secrets["OPENAI_API_KEY"])
         st.session_state.token_count += get_encoding_length(query_message)
         st.session_state.prompts.append(ChatMessage(role="user", content=query_message))
-        while st.session_state.token_count >= 4000:
+        while st.session_state.token_count >= 3500:
             pop_user_message = st.session_state.prompts.pop(1).content
             st.session_state.token_count -= get_encoding_length(pop_user_message)
-            pop_assistant_message = st.session_state.prompts.pop(1)
+            pop_assistant_message = st.session_state.prompts.pop(1).content
             st.session_state.token_count -= get_encoding_length(pop_assistant_message)
 
         response = llm(st.session_state.prompts)
         st.session_state.prompts.append(
             ChatMessage(role="assistant", content=response.content)
         )
+        st.session_state.token_count += get_encoding_length(response.content)
+
         st.session_state.messages.append(
             ChatMessage(role="assistant", content=response.content)
         )
